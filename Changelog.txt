@@ -1,6 +1,10 @@
 //Update soon...
 
 
+v. Prototype 0.01B
+- Create a file with the basics of the code.
+- Planning different systems
+
 v. Prototype 0.01A
 - Create project.
 - Use of the library SFML.
