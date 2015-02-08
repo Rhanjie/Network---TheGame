@@ -3,7 +3,7 @@
 
 v. Prototype 0.01B
 - Create a file with the basics of the code.
-- Planning different systems
+- Planning different systems.
 
 v. Prototype 0.01A
 - Create project.
