@@ -2,7 +2,7 @@
 
 rha::cServerInfo::cServerInfo(){
     this->ip="";
-    this->port=NULL;
+    this->port=0;
 }void rha::cServerInfo::setData
   (sf::IpAddress ip, unsigned short port){
     this->ip=ip;

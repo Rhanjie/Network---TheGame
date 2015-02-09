@@ -20,3 +20,9 @@ bool rha::checkPhrase(std::string text, std::string phrase){
     }else return true;
 }
 
+std::string varToString(int variable, std::string text=""){
+    std::ostringstream helper;
+
+    helper<<text<<variable;
+    return helper.str();
+}
