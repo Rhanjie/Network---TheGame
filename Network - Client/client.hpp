@@ -15,8 +15,9 @@ namespace rha{
 
          bool isConnect;
         public:
-         cClient(cServerInfo* server);
-         void connect(sf::IpAddress ip, unsigned short port);
+         cClient(cServerInfo* server=nullptr);
+         void connect(/*sf::IpAddress ip, unsigned short port*/);
+         void disconnect();
 
          //registration&login todo..
          inline bool getConnect(){return isConnect;}

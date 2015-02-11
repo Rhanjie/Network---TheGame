@@ -1,6 +1,14 @@
 //Update soon...
 
 
+
+
+Update 0.05A:
+
+- Rework the code architecture
+- Connecting client to the server.
+- Basic server with a temporary code.
+
 v. Prototype 0.01B
 - Create a file with the basics of the code.
 - Planning different systems.

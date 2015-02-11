@@ -1,6 +1,6 @@
 #include "helper.hpp"
 
-void rha::checkEvent(sf::Window* window, sf::Event* event){ //todo
+void rha::checkEvent(sf::Window* window, sf::Event* event){ //deprecated
     while(window->pollEvent(*event)){
         switch(event->type){
          case sf::Event::Closed:

@@ -9,13 +9,13 @@ namespace rha{
     class cGameManager{
         private:
          sf::RenderWindow window;
-         sf::Event event;
          sf::Font font;
 
          cServerInfo server;
-         //cClient client(&server);
+         cClient client;
 
          void menu();
+         void game();
         protected:
          enum gameState{MENU, GAME, END};
             gameState state;

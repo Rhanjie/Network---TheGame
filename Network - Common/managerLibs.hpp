@@ -3,12 +3,14 @@
 
 #include <time.h>
 #include <vector>
+#include <thread>
 #include <stdio.h>
 #include <fstream>
 #include <sstream>
 #include <stdlib.h>
 #include <iostream>
 
+#include <TGUI/TGUI.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
