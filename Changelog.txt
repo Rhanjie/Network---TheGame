@@ -1,19 +1,28 @@
 //Update soon...
 
+Update: Prototype 0.2A:
+- Large develop server.
+- Sending packet client<->server.
+- Easier loading GUI elements.
+- A few other stuff.
 
+Update: Prototype 0.08A:
+- Use the library TGUI.
+- Create provisional menu.
+- Add the seeds of gameplay.
+- Add of the thread connecting.
+- Junk selection for later hide.
 
-
-Update 0.05A:
-
-- Rework the code architecture
+Update: Prototype 0.05A:
+- Rework the code architecture.
 - Connecting client to the server.
 - Basic server with a temporary code.
 
-v. Prototype 0.01B
+Update: Prototype 0.01B
 - Create a file with the basics of the code.
 - Planning different systems.
 
-v. Prototype 0.01A
+Update: Prototype 0.01A
 - Create project.
 - Use of the library SFML.
 - Add a repository on github.

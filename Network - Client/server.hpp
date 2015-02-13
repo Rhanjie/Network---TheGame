@@ -8,14 +8,12 @@ namespace rha{
          sf::IpAddress ip;
          unsigned short port;
         public:
-         sf::TcpSocket socket;
          cServerInfo();
 
          void setData(sf::IpAddress ip, unsigned short port);
 
          inline sf::IpAddress getIP(){return ip;}
          inline unsigned short getPort(){return port;}
-         inline sf::TcpSocket* getSocket(){return &socket;}
     };
 }
 

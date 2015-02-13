@@ -3,7 +3,7 @@
 
 int main(){
     rha::cGameManager manager(sf::Vector2i(800,600), "Hammerfall");
-    manager.runGame(); //while - main loop
+    manager.runApp(); //while - main loop
 
     return 0;
 }

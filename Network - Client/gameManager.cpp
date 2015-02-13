@@ -1,20 +1,17 @@
 #include "gameManager.hpp"
 
 rha::cGameManager::cGameManager(sf::Vector2i size, std::string title){
-    rha::cClient client(&server);
-    this->client=client;
-
     window.create(sf::VideoMode(size.x, size.y, 32), title, sf::Style::Close);
     if(!font.loadFromFile("media/font.ttf")){
         state=END; return;
     } else state=MENU;
-} void rha::cGameManager::runGame(){
+} void rha::cGameManager::runApp(){
     while(window.isOpen()){
         switch(state){
             case MENU:
-             this->menu(); break;
+             this->runMenu(); break;
             case GAME:
-             this->game(); break;
+             this->runGame(); break;
             case END:
              window.close(); break;
         }
@@ -23,13 +20,14 @@ rha::cGameManager::cGameManager(sf::Vector2i size, std::string title){
 
 /*-------------*/
 
-void rha::cGameManager::menu(){
-    tgui::Gui gui(window);
-    gui.setGlobalFont(font); //todo - hide it somewhere
-
+void rha::cGameManager::runMenu(){
     sf::Vector2f mouse;
 
-    sf::Text title("Hammerfall", font, 50);
+    tgui::Gui gui(window);
+    gui.setGlobalFont(font);
+    loaderGUI.loadMenuGUI(gui);
+
+    sf::Text title("Hammerfall", font, 50); //todo - logo.
     title.setOrigin(title.getGlobalBounds().width/2, 50/2);
     title.setPosition((window.getSize()).x/2, 75);
 
@@ -44,14 +42,8 @@ void rha::cGameManager::menu(){
         txChoices[i].setPosition((window.getSize()).x/2,250+i*60);
     }
 
-    tgui::EditBox::Ptr editBoxUsername(gui, "Username"); //todo - hide it somewhere
-    editBoxUsername->load("media/Black.conf");
-    editBoxUsername->setSize(400, 40);
-    editBoxUsername->setPosition(200, 140);
-    editBoxUsername->setText("localhost");
-
     sf::Event event;
-    while(state==MENU){ //todo - placed in cMenuControl
+    while(state==MENU){
         if(client.getConnect()) state=GAME;
         mouse=static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
         while(window.pollEvent(event)){
@@ -61,7 +53,7 @@ void rha::cGameManager::menu(){
              case sf::Event::MouseButtonReleased:
                 if((event.key).code==sf::Mouse::Left){
                     if((txChoices[0].getGlobalBounds()).contains(mouse)){
-                        std::thread thrConnect(&rha::cClient::connect, &client); thrConnect.detach();
+                        std::thread thrConnect(&rha::cClient::connect, &client, "localhost", 7415); thrConnect.detach();
                     } else if((txChoices[1].getGlobalBounds()).contains(mouse)){
                         state=END;
                     }
@@ -87,7 +79,7 @@ void rha::cGameManager::menu(){
     }
 }
 
-void rha::cGameManager::game(){
+void rha::cGameManager::runGame(){
     sf::Text title("Game is create...", font, 50); //only test
     title.setOrigin(title.getGlobalBounds().width/2, 50/2);
     title.setPosition((window.getSize()).x/2, 75);
@@ -101,6 +93,8 @@ void rha::cGameManager::game(){
              default: break;
             }
         }
+
+        //...
 
         window.clear();
         window.draw(title);
