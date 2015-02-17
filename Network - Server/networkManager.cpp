@@ -1,17 +1,14 @@
 #include "networkManager.hpp"
 
 bool rha::cNetworkManager::sendPacket(sf::TcpSocket* socket, sf::Packet packet){
-    std::string type="NULL";
-
-    if(packet>>type); else return false; //todo - if(!packet>>type)
     if(socket->send(packet)==sf::Socket::Done)
      return true;
     else return false;
 }
 
-bool rha::cNetworkManager::sendRawPacket(sf::TcpSocket* socket, std::string content){
+bool rha::cNetworkManager::sendRawPacket(sf::TcpSocket* socket, rha::typePacketsInServer typePacket){
     sf::Packet packet;
-    packet<<content;
+    packet<<typePacket;
 
     if(socket->send(packet)==sf::Socket::Done)
      return true;
@@ -19,13 +16,16 @@ bool rha::cNetworkManager::sendRawPacket(sf::TcpSocket* socket, std::string cont
 }
 
 bool rha::cNetworkManager::receivePacket(sf::TcpSocket* socket){
+    int converter;
+
     if(socket->receive(this->dataPacket)==sf::Socket::Done){
-        if(this->dataPacket>>typePacket)
-         return true;
-        else return false;
+        if(this->dataPacket>>converter){
+            tLastPacketReceive=static_cast<rha::typePacketsInClient>(converter); return true;
+        } else return false;
     }else{
-        this->dataPacket<<"NORMAL_DATA_NULL";
-        this->dataPacket>>typePacket;
+        this->dataPacket<<rha::typePacketsInClient::NORMAL_CLIENT_NULL;
+        this->dataPacket>>converter;
+        tLastPacketReceive=static_cast<rha::typePacketsInClient>(converter);
         return false;
     }
 }

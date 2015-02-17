@@ -17,8 +17,8 @@ namespace rha{
          sf::SocketSelector selector;
 
          bool listening(sf::TcpListener* listener, unsigned int port);
-         bool findNewConnection(sf::TcpListener* listener);
-         void serveClients();
+         bool findNewConnection(sf::TcpListener* listener, tgui::Gui& gui);
+         void serveClients(tgui::Gui& gui);
     };
 }
 

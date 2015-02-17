@@ -6,11 +6,12 @@
 namespace rha{
     class cServerManager{
         private:
+         tgui::Callback callback;
          sf::RenderWindow window;
+         sf::Event event;
          sf::Font font;
 
          rha::cServer server;
-         rha::cLoaderGUI loader;
 
          void configure();
          void running();

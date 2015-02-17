@@ -1,7 +1,6 @@
 #ifndef GAMEMANAGER_HPP_INCLUDED
 #define GAMEMANAGER_HPP_INCLUDED
 #include "managerLibs.hpp"
-#include "loaderGUI.hpp"
 #include "helper.hpp"
 #include "server.hpp"
 #include "client.hpp"
@@ -9,12 +8,11 @@
 namespace rha{
     class cGameManager{
         private:
+         tgui::Callback callback;
          sf::RenderWindow window;
-            sf::Font font;
+         sf::Font font;
 
-         cLoaderGUI loaderGUI;
-            cClient client;
-
+         cClient client;
 
          void runMenu();
          void runGame();

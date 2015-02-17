@@ -2,24 +2,24 @@
 #define CLIENT_HPP_INCLUDED
 #include "networkManager.hpp"
 #include "managerLibs.hpp"
-#include "player.hpp"
+#include "players.hpp"
 
 namespace rha{
     class cClient{
         private:
-         cPlayer player;
          cServerInfo server;
-         cNetworkManager manager;
+         cPlayer player;
 
-         sf::TcpSocket socket;
          std::string nick;
          bool isConnect;
         public:
-         cClient();
-         void connect(sf::IpAddress ip, unsigned short port);
-         //registration&login todo..
-         void disconnect();
+         cNetworkManager manager;
+         sf::TcpSocket socket;
 
+         cClient();
+         void connect(sf::IpAddress ip, unsigned short port, std::string nick);
+         bool login(std::string nick);
+         void disconnect();
 
          inline bool getConnect(){return isConnect;}
     };

@@ -21,17 +21,18 @@ rha::cGameManager::cGameManager(sf::Vector2i size, std::string title){
 /*-------------*/
 
 void rha::cGameManager::runMenu(){
+    /*sf::Text title("Hammerfall", font, 50); //todo - logo.
+    title.setOrigin(title.getGlobalBounds().width/2, 50/2);
+    title.setPosition((window.getSize()).x/2, 75);*/
+
     sf::Vector2f mouse;
 
     tgui::Gui gui(window);
     gui.setGlobalFont(font);
-    loaderGUI.loadMenuGUI(gui);
 
-    sf::Text title("Hammerfall", font, 50); //todo - logo.
-    title.setOrigin(title.getGlobalBounds().width/2, 50/2);
-    title.setPosition((window.getSize()).x/2, 75);
+    gui.loadWidgetsFromFile("media/menuForm.RhAf");
 
-    std::string choices[]={"Play", "Quit"};
+    /*std::string choices[]={"Play", "Quit"};
     sf::Text txChoices[2];
     for(short i=0; i<2; ++i){ //todo - delete, author's manager sf::Text
         txChoices[i].setFont(font);
@@ -40,7 +41,7 @@ void rha::cGameManager::runMenu(){
 
         txChoices[i].setOrigin(txChoices[i].getGlobalBounds().width/2, 30/2);
         txChoices[i].setPosition((window.getSize()).x/2,250+i*60);
-    }
+    }*/
 
     sf::Event event;
     while(state==MENU){
@@ -50,29 +51,30 @@ void rha::cGameManager::runMenu(){
             switch(event.type){
              case sf::Event::Closed:
                 state=END; break;
-             case sf::Event::MouseButtonReleased:
-                if((event.key).code==sf::Mouse::Left){
-                    if((txChoices[0].getGlobalBounds()).contains(mouse)){
-                        std::thread thrConnect(&rha::cClient::connect, &client, "localhost", 7415); thrConnect.detach();
-                    } else if((txChoices[1].getGlobalBounds()).contains(mouse)){
-                        state=END;
-                    }
-                }
              default: break;
             }
             gui.handleEvent(event);
+        } while(gui.pollCallback(callback)){
+            if(callback.id==1){
+                tgui::EditBox::Ptr eBoxCopy1=gui.get("EditBox1");
+                tgui::EditBox::Ptr eBoxCopy2=gui.get("EditBox2");
+
+                std::thread thrConnect(&rha::cClient::connect, &client, std::string(eBoxCopy1->getText()),
+                 7415, std::string(eBoxCopy2->getText())); thrConnect.detach();
+            }
+            else if(callback.id==2){state=END; break;}
         }
 
-        for(short i=0; i<2; ++i){ //todo - delete this code, author's manager sf::Text.
+        /*for(short i=0; i<2; ++i){ //todo - delete this code, author's manager sf::Text.
             if((txChoices[i].getGlobalBounds()).contains(mouse))
                 txChoices[i].setColor(sf::Color::Red);
             else txChoices[i].setColor(sf::Color::White);
-        }
+        }*/
 
         window.clear();
-        window.draw(title);
+        /*window.draw(title);
         for(short i=0; i<2; ++i) //todo - delete this code.
-         window.draw(txChoices[i]);
+         window.draw(txChoices[i]);*/
          gui.draw();
 
         window.display();
@@ -84,6 +86,10 @@ void rha::cGameManager::runGame(){
     title.setOrigin(title.getGlobalBounds().width/2, 50/2);
     title.setPosition((window.getSize()).x/2, 75);
 
+    tgui::Gui gui(window);
+    gui.setGlobalFont(font);
+    gui.loadWidgetsFromFile("media/gameForm.RhAf");
+
     sf::Event event;
     while(state==GAME){
         while(window.pollEvent(event)){
@@ -92,12 +98,17 @@ void rha::cGameManager::runGame(){
                 client.disconnect(); state=MENU; break;
              default: break;
             }
+            gui.handleEvent(event);
+        } while(gui.pollCallback(callback)){
+            if(callback.id==1){/*join the game*/}
+            else if(callback.id==2){client.disconnect(); state=MENU; break;}
         }
 
         //...
 
         window.clear();
         window.draw(title);
+        gui.draw();
 
         window.display();
     }

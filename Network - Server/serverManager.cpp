@@ -11,7 +11,7 @@ rha::cServerManager::cServerManager(sf::Vector2i size, std::string title){
             case WAIT:
              configure(); break;
             case RUN:
-             /*running();*/ break;
+             running(); break;
             case END:
              window.close(); break;
         }
@@ -19,14 +19,11 @@ rha::cServerManager::cServerManager(sf::Vector2i size, std::string title){
 }
 
 void rha::cServerManager::configure(){
-    sf::TcpListener listener;
     tgui::Gui gui(window);
     gui.setGlobalFont(font);
-    loader.loadServerGUI(gui);
 
-    server.listening(&listener, 7415);
+    gui.loadWidgetsFromFile("media/waitForm.RhAf");
 
-    sf::Event event;
     while(state==WAIT){
         while(window.pollEvent(event)){
             switch(event.type){
@@ -35,11 +32,41 @@ void rha::cServerManager::configure(){
              default: break;
             }
             gui.handleEvent(event);
+        } while(gui.pollCallback(callback)){
+            if(callback.id==1){state=RUN; break;}
+            else if(callback.id==2){state=END; break;}
         }
 
-        if((server.selector).wait(sf::seconds(0.02))){ //todo - only test
-            server.findNewConnection(&listener);
-            server.serveClients(); //todo - test
+        window.clear();
+        gui.draw();
+
+        window.display();
+    }
+}
+
+void rha::cServerManager::running(){
+    sf::TcpListener listener;
+    tgui::Gui gui(window);
+
+    gui.setGlobalFont(font);
+    server.listening(&listener, 7415);
+    gui.loadWidgetsFromFile("media/runForm.RhAf");
+
+    while(state==RUN){
+        while(window.pollEvent(event)){
+            switch(event.type){
+             case sf::Event::Closed:
+                state=END; break;
+             default: break;
+            }
+            gui.handleEvent(event);
+        } while(gui.pollCallback(callback)){
+            if(callback.id==1){state=WAIT; break;}
+        }
+
+        if((server.selector).wait(sf::seconds(0.02))){
+            server.findNewConnection(&listener, gui);
+            server.serveClients(gui);
         }
 
         window.clear();

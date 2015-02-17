@@ -3,10 +3,9 @@
 
 #include "networkManager.hpp"
 #include "gameManager.hpp"
-#include "loaderGUI.hpp"
 #include "helper.hpp"
 #include "server.hpp"
-#include "player.hpp"
+#include "players.hpp"
 #include "client.hpp"
 
 #endif // CONNECTOR_HPP_INCLUDED
