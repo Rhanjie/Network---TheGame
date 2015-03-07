@@ -1,9 +1,7 @@
 #ifndef GAMEMANAGER_HPP_INCLUDED
 #define GAMEMANAGER_HPP_INCLUDED
 #include "managerLibs.hpp"
-#include "helper.hpp"
-#include "server.hpp"
-#include "client.hpp"
+#include "connector.hpp"
 
 namespace rha{
     class cGameManager{

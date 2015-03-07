@@ -2,10 +2,11 @@
 #define CONNECTOR_HPP_INCLUDED
 
 #include "networkManager.hpp"
-#include "gameManager.hpp"
+#include "otherPlayers.hpp"
+#include "basePerson.hpp"
 #include "helper.hpp"
 #include "server.hpp"
-#include "players.hpp"
+#include "player.hpp"
 #include "client.hpp"
 
 #endif // CONNECTOR_HPP_INCLUDED

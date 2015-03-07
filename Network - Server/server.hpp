@@ -12,13 +12,19 @@ namespace rha{
 
          cNetworkManager manager;
          std::vector<cClient>vClients;
+         tgui::Gui* gui=nullptr;
         public:
-         //sf::TcpListener listener; //todo
-         sf::SocketSelector selector;
+         sf::TcpListener* listener=nullptr; //todo - test
+         //std::mutex mutex;
+         //sf::SocketSelector selector;
 
          bool listening(sf::TcpListener* listener, unsigned int port);
-         bool findNewConnection(sf::TcpListener* listener, tgui::Gui& gui);
-         void serveClients(tgui::Gui& gui);
+         void findNewConnection();
+         void serveClients();
+         void receiveData();
+
+         inline void setGUIPtr(tgui::Gui* gui){this->gui=gui;}
+         inline void setListenerPtr(sf::TcpListener* listener){this->listener=listener; listener->setBlocking(false);}
     };
 }
 

@@ -21,31 +21,15 @@ rha::cGameManager::cGameManager(sf::Vector2i size, std::string title){
 /*-------------*/
 
 void rha::cGameManager::runMenu(){
-    /*sf::Text title("Hammerfall", font, 50); //todo - logo.
-    title.setOrigin(title.getGlobalBounds().width/2, 50/2);
-    title.setPosition((window.getSize()).x/2, 75);*/
-
     sf::Vector2f mouse;
 
     tgui::Gui gui(window);
     gui.setGlobalFont(font);
-
-    gui.loadWidgetsFromFile("media/menuForm.RhAf");
-
-    /*std::string choices[]={"Play", "Quit"};
-    sf::Text txChoices[2];
-    for(short i=0; i<2; ++i){ //todo - delete, author's manager sf::Text
-        txChoices[i].setFont(font);
-        txChoices[i].setString(choices[i]);
-        txChoices[i].setCharacterSize(30);
-
-        txChoices[i].setOrigin(txChoices[i].getGlobalBounds().width/2, 30/2);
-        txChoices[i].setPosition((window.getSize()).x/2,250+i*60);
-    }*/
+    gui.loadWidgetsFromFile("media/oldStyle/menuForm.RhAf");
 
     sf::Event event;
     while(state==MENU){
-        if(client.getConnect()) state=GAME;
+        if(client.getStatus()==cClient::WATCHING||client.getStatus()==cClient::PLAYING) state=GAME;
         mouse=static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
         while(window.pollEvent(event)){
             switch(event.type){
@@ -65,51 +49,55 @@ void rha::cGameManager::runMenu(){
             else if(callback.id==2){state=END; break;}
         }
 
-        /*for(short i=0; i<2; ++i){ //todo - delete this code, author's manager sf::Text.
-            if((txChoices[i].getGlobalBounds()).contains(mouse))
-                txChoices[i].setColor(sf::Color::Red);
-            else txChoices[i].setColor(sf::Color::White);
-        }*/
-
         window.clear();
-        /*window.draw(title);
-        for(short i=0; i<2; ++i) //todo - delete this code.
-         window.draw(txChoices[i]);*/
-         gui.draw();
+        gui.draw();
 
         window.display();
     }
 }
 
 void rha::cGameManager::runGame(){
-    sf::Text title("Game is create...", font, 50); //only test
+    sf::Text title("Game is created...", font, 50); //todo - only test
     title.setOrigin(title.getGlobalBounds().width/2, 50/2);
     title.setPosition((window.getSize()).x/2, 75);
 
+    sf::Clock clock; //for fixed step loop
+    sf::Time timeOfUpdate=sf::Time::Zero;
+    const sf::Time timeStep=sf::seconds(1/60.f);
+
     tgui::Gui gui(window);
     gui.setGlobalFont(font);
-    gui.loadWidgetsFromFile("media/gameForm.RhAf");
+    gui.loadWidgetsFromFile("media/oldStyle/gameForm.RhAf");
 
     sf::Event event;
     while(state==GAME){
-        while(window.pollEvent(event)){
-            switch(event.type){
-             case sf::Event::Closed:
-                client.disconnect(); state=MENU; break;
-             default: break;
+        sf::Time time=clock.restart();
+
+        timeOfUpdate+=time;
+        while(timeOfUpdate>timeStep){
+            timeOfUpdate-=timeStep;
+            while(window.pollEvent(event)){
+                client.managePlayer(event);
+                switch(event.type){
+                 case sf::Event::Closed:
+                    client.disconnect(); state=MENU; break;
+                 default: break;
+                }
+                gui.handleEvent(event);
+            } while(gui.pollCallback(callback)){
+                if(callback.id==1){(client.manager).sendRawPacket(&client.socket, rha::typePacketsInClient::QUESTION_CLIENT_JOIN);} //todo
+                else if(callback.id==2){client.disconnect(); state=MENU; break;}
             }
-            gui.handleEvent(event);
-        } while(gui.pollCallback(callback)){
-            if(callback.id==1){/*join the game*/}
-            else if(callback.id==2){client.disconnect(); state=MENU; break;}
+
+            client.updateAll(window);
         }
 
-        //...
-
         window.clear();
+        client.drawAll(window);
+        window.setView(client.player.view);
         window.draw(title);
+        window.setView(window.getDefaultView());
         gui.draw();
-
         window.display();
     }
 }

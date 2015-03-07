@@ -1,5 +1,19 @@
 //Update soon...
 
+Update: Alpha 0.5A:
+- Support for multiple players.
+- Handling the camera.
+- Character movement.
+- Lots of fixes.
+- Much more stuff.
+
+Update: Prototype 0.8A:
+- Large changes to the code.
+- Changed service packets.
+- Added some security.
+- Fixed a lot of bugs.
+- Started writing gameplay.
+
 Update: Prototype 0.2A:
 - Large develop server.
 - Sending packet client<->server.
