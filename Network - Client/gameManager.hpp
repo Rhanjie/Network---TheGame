@@ -8,7 +8,6 @@ namespace rha{
         private:
          tgui::Callback callback;
          sf::RenderWindow window;
-         sf::Font font;
 
          cClient client;
 

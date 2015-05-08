@@ -1,22 +1,23 @@
 #ifndef CLIENT_HPP_INCLUDED
 #define CLIENT_HPP_INCLUDED
 #include "networkManager.hpp"
-#include "managerLibs.hpp"
-#include "otherPlayers.hpp"
 #include "loaderTextures.hpp"
+#include "otherPlayers.hpp"
+#include "managerLibs.hpp"
 #include "player.hpp"
+#include "tile.hpp"
+#include "map.hpp"
 
 namespace rha{
     class cClient{
         public:
          enum eStatus{NOTCONNECT, WATCHING, PLAYING};
          std::vector<cOtherPlayer>vOtherPlayers;
-         cPlayer player;
         private:
+         cMap mapGame;
+         cPlayer player;
          cServerInfo server;
-         cLoaderTexture loaderTexture;
          sf::Clock clock; sf::Time timer;
-         //cPlayer player;
 
          eStatus status;
         public:
@@ -33,6 +34,7 @@ namespace rha{
          void disconnect();
 
          inline bool getStatus(){return status;}
+         inline sf::View getView(){return player.view;}
     };
 }
 

@@ -7,16 +7,11 @@
 namespace rha{
     class cServer{
         private:
-         //sf::TcpListener listener;
-         //sf::SocketSelector selector;
-
          cNetworkManager manager;
          std::vector<cClient>vClients;
          tgui::Gui* gui=nullptr;
         public:
          sf::TcpListener* listener=nullptr; //todo - test
-         //std::mutex mutex;
-         //sf::SocketSelector selector;
 
          bool listening(sf::TcpListener* listener, unsigned int port);
          void findNewConnection();
@@ -24,7 +19,7 @@ namespace rha{
          void receiveData();
 
          inline void setGUIPtr(tgui::Gui* gui){this->gui=gui;}
-         inline void setListenerPtr(sf::TcpListener* listener){this->listener=listener; listener->setBlocking(false);}
+         inline void setListenerPtr(sf::TcpListener* listener){this->listener=listener; listener->setBlocking(true);}
     };
 }
 

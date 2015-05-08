@@ -10,7 +10,7 @@ bool rha::cServer::listening(sf::TcpListener* listener, unsigned int port){
 void rha::cServer::findNewConnection(){
     tgui::ChatBox::Ptr cBoxCopy=gui->get("ChatBox1");
 
-    while(1){
+    while(1){ //todo - optimization.
         sf::TcpSocket* newUser=new sf::TcpSocket;
         if(listener->accept(*newUser)!=sf::Socket::Done){delete newUser;}
         else{vClients.push_back(cClient(newUser, "anonymous"));
@@ -24,8 +24,9 @@ void rha::cServer::serveClients(){
     if(!vClients.empty()){
         for(short i=0; i<vClients.size(); ++i){
             if((vClients[i].player).action==cPlayer::MOVE){
-                if((vClients[i].player).direction==cPlayer::LEFT)(vClients[i].player).x+=(vClients[i].player).vX;
-                else if((vClients[i].player).direction==cPlayer::RIGHT)(vClients[i].player).x-=(vClients[i].player).vX;
+                if((vClients[i].player).direction==cPlayer::LEFT)(vClients[i].player).x-=(vClients[i].player).vX;
+                else if((vClients[i].player).direction==cPlayer::RIGHT)(vClients[i].player).x+=(vClients[i].player).vX;
+
                 //...
             }
         }
@@ -36,7 +37,7 @@ void rha::cServer::receiveData(){
     tgui::ChatBox::Ptr cBoxCopy=gui->get("ChatBox1");
     tgui::ListBox::Ptr lBoxCopy=gui->get("ListBox1");
 
-    while(1){
+    while(1){ //todo - optimization.
         if(!vClients.empty()){
             for(short i=0; i<vClients.size(); ++i){
                 if(manager.receivePacket(vClients[i].socket)){
@@ -46,9 +47,9 @@ void rha::cServer::receiveData(){
                             std::string nick=""; bool protection=false; sf::Packet packet, packetOther; sf::Int8 size;
 
                             if(manager.getLastPacket()>>nick){
-                                if(nick.length()<=0){protection=true; break;}
-                                for(short j=0; j<vClients.size(); ++j) //protection
-                                 if(vClients[j].nick==nick){protection=true; break;}
+                                //if(nick.length()<=0){protection=true; break;}
+                                //for(short j=0; j<vClients.size(); ++j) //protection
+                                 if(vClients[i].nick==nick||nick.length()<=0||nick.length()>15){protection=true; break;} //todo - protection
 
                                 if(!protection){
                                     lBoxCopy->addItem(nick);
@@ -59,22 +60,23 @@ void rha::cServer::receiveData(){
                                     packetOther<<rha::typePacketsInServer::REPLY_OTHERCLIENT_LOGIN<<vClients[i].nick;
                                     if(!vClients.empty()){
                                         for(short j=0; j<vClients.size(); ++j){
-                                            if(j!=i){packet<<vClients[j].nick; std::cout<<"ADD NICK IN PACKET\n";}
+                                            if(j!=i){packet<<vClients[j].nick<<int(vClients[j].getStatus());}
                                         }
                                     }
 
                                     if(manager.sendPacket(vClients[i].socket, packet)){
                                         for(short j=0; j<vClients.size(); ++j)
                                          if(j!=i) manager.sendPacket(vClients[j].socket, packetOther);
-                                    } cBoxCopy->addLine("New player is connected the game!", sf::Color::Green); break;
+                                    } vClients[i].setStatus(cClient::eStatus::WATCHING);
+                                    cBoxCopy->addLine("New player is connected the game!", sf::Color::Green); break;
                                 }else{manager.sendRawPacket(vClients[i].socket, rha::typePacketsInServer::ERROR_CLIENT_LOGIN); vClients.erase(vClients.begin()+i); break;}
                             }else{manager.sendRawPacket(vClients[i].socket, rha::typePacketsInServer::ERROR_CLIENT_LOGIN); vClients.erase(vClients.begin()+i); break;}
                         }
                         case rha::typePacketsInClient::QUESTION_CLIENT_JOIN:{
-                            cBoxCopy->addLine("Receive packet - \"QUESTION_CLIENT_JOIN\"", sf::Color::White);
                             bool protection=false; sf::Packet packet;
 
-                            //todo - protection
+                            cBoxCopy->addLine("Receive packet - \"QUESTION_CLIENT_JOIN\"", sf::Color::Magenta);
+                            if(vClients[i].getStatus()==cClient::eStatus::PLAYING) protection=true;
 
                             if(!protection){
                                 (vClients[i].player).x=20, (vClients[i].player).y=0; //todo - only test
@@ -89,7 +91,7 @@ void rha::cServer::receiveData(){
                                         for(short j=0; j<vClients.size(); ++j){
                                             if(j!=i){manager.sendPacket(vClients[j].socket, packet);} //todo - disconnect
                                         }
-                                    } vClients[i].status=cClient::PLAYING;
+                                    } vClients[i].setStatus(cClient::PLAYING);
                                     cBoxCopy->addLine("New player is joined the game!", sf::Color::Green);
                                 }else{(vClients[i].player).team=cPlayer::NONE; (vClients[i].player).profession=cPlayer::LACK;}
                             }else manager.sendRawPacket(vClients[i].socket, rha::typePacketsInServer::ERROR_CLIENT_JOIN); break;
@@ -108,7 +110,7 @@ void rha::cServer::receiveData(){
                                      packet<<(vClients[j].player).x<<(vClients[j].player).y;
                                      std::cout<<i<<" - Packet - ["<<j<<"] - "<<(vClients[j].player).x<<std::endl;
                                     }
-                                }if(!manager.sendPacket(vClients[i].socket, packet)); //vClients[i].disconnect();
+                                }if(!manager.sendPacket(vClients[i].socket, packet)); //{vClients.erase(vClients[i]) //vClients[i].disconnect();
                             } break;
                         }
                         case rha::typePacketsInClient::QUESTION_PLAYER_ACTION:{
@@ -120,10 +122,10 @@ void rha::cServer::receiveData(){
 
                                 packet<<rha::typePacketsInServer::INFO_PLAYER_ACTION<<vClients[i].nick
                                  <<int((vClients[i].player).action)<<int((vClients[i].player).direction);
-                                manager.sendPacket(vClients[i].socket, packet);
-
-                                for(short j=0; j<vClients.size(); ++j)
-                                 if(j!=i) manager.sendPacket(vClients[j].socket, packet);
+                                if(manager.sendPacket(vClients[i].socket, packet)){
+                                    for(short j=0; j<vClients.size(); ++j)
+                                     if(j!=i) manager.sendPacket(vClients[j].socket, packet);
+                                }
                             } break;
                         }
                         case rha::typePacketsInClient::QUESTION_PLAYER_STOPACTION:{
@@ -131,12 +133,10 @@ void rha::cServer::receiveData(){
 
                             (vClients[i].player).action=cPlayer::STAND;
                             packet<<rha::typePacketsInServer::INFO_PLAYER_STOPACTION<<vClients[i].nick;
-                             //<<int((vClients[i].player).action)<<int((vClients[i].player).direction);
-                            manager.sendPacket(vClients[i].socket, packet);
-
-                            for(short j=0; j<vClients.size(); ++j)
-                             if(j!=i) manager.sendPacket(vClients[j].socket, packet);
-                            break;
+                            if(manager.sendPacket(vClients[i].socket, packet)){
+                                for(short j=0; j<vClients.size(); ++j)
+                                 if(j!=i) manager.sendPacket(vClients[j].socket, packet);
+                            } break;
                         }
                     }
                 }

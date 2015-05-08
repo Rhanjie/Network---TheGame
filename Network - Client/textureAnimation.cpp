@@ -1,6 +1,5 @@
 #include "textureAnimation.hpp"
 
-//rha::cTextureAnimation::cTextureAnimation(std::string path, sf::Vector2i sizeFrame){setOtherTexture(path, sizeFrame);}
 void rha::cTextureAnimation::setOtherTexture(sf::Sprite sprite, sf::Vector2i sizeFrame){
     this->sizeFrame=sizeFrame;
 
@@ -13,19 +12,20 @@ void rha::cTextureAnimation::setOtherTexture(sf::Sprite sprite, sf::Vector2i siz
 
     sprite.setTextureRect(sf::IntRect(currentFrame.x*this->sizeFrame.x, currentFrame.y*this->sizeFrame.y,
      (currentFrame.x*this->sizeFrame.x)+this->sizeFrame.x, (currentFrame.y*this->sizeFrame.y)+this->sizeFrame.y));
-    sprite.setOrigin(sizeFrame.x/2, sizeFrame.y/2);
+    sprite.setOrigin(sizeFrame.x/2, sizeFrame.y/2); //todo - test
 }
 
 void rha::cTextureAnimation::serveAnimation(){
-    currentFrame.x+=1; //60 = 1 second
+    currentFrame.x+=3; //60 = 1 second
 
+    if(currentFrame.x>=30*quantityFrame.x) currentFrame.x=0;
     sprite.setTextureRect(sf::IntRect(currentFrame.x/30*this->sizeFrame.x,
      currentFrame.y*this->sizeFrame.y, this->sizeFrame.x, this->sizeFrame.y));
-    if(currentFrame.x>=30*quantityFrame.x) currentFrame.x=0;
 }
 
 void rha::cTextureAnimation::setAnimation(short int y){
-    if(y>quantityFrame.y) y=quantityFrame.y; currentFrame.y=y;
+    if(y>quantityFrame.y)y=quantityFrame.y;
+     currentFrame.y=y; currentFrame.x=0;
 
-    currentFrame.x=0;
+    this->serveAnimation();
 }

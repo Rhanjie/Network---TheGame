@@ -12,17 +12,17 @@ namespace rha{
          //sf::TcpSocket* socket;
 
          //std::string nick;
-         //eStatus status;
+         eStatus status;
         public:
          cPlayer player; //todo
          sf::TcpSocket* socket;
          std::string nick;
-         eStatus status;
 
          cClient(sf::TcpSocket* socket, std::string nick);
          //void
 
-         inline bool getStatus(){return &status;}
+         void setStatus(eStatus status){this->status=status;}
+         inline eStatus getStatus(){return status;}
     };
 }
 

@@ -2,7 +2,7 @@
 
 rha::cGameManager::cGameManager(sf::Vector2i size, std::string title){
     window.create(sf::VideoMode(size.x, size.y, 32), title, sf::Style::Close);
-    if(!font.loadFromFile("media/font.ttf")){
+    if(!(cManagerResources::getObj()).isLoaded()){
         state=END; return;
     } else state=MENU;
 } void rha::cGameManager::runApp(){
@@ -24,7 +24,7 @@ void rha::cGameManager::runMenu(){
     sf::Vector2f mouse;
 
     tgui::Gui gui(window);
-    gui.setGlobalFont(font);
+    gui.setGlobalFont(*cManagerResources::getObj().getFont());
     gui.loadWidgetsFromFile("media/oldStyle/menuForm.RhAf");
 
     sf::Event event;
@@ -57,7 +57,7 @@ void rha::cGameManager::runMenu(){
 }
 
 void rha::cGameManager::runGame(){
-    sf::Text title("Game is created...", font, 50); //todo - only test
+    sf::Text title("Game is created...", *cManagerResources::getObj().getFont(), 50); //todo - only test
     title.setOrigin(title.getGlobalBounds().width/2, 50/2);
     title.setPosition((window.getSize()).x/2, 75);
 
@@ -66,7 +66,7 @@ void rha::cGameManager::runGame(){
     const sf::Time timeStep=sf::seconds(1/60.f);
 
     tgui::Gui gui(window);
-    gui.setGlobalFont(font);
+    gui.setGlobalFont(*cManagerResources::getObj().getFont());
     gui.loadWidgetsFromFile("media/oldStyle/gameForm.RhAf");
 
     sf::Event event;
@@ -92,9 +92,9 @@ void rha::cGameManager::runGame(){
             client.updateAll(window);
         }
 
-        window.clear();
+        window.clear(sf::Color(41, 137, 216));
         client.drawAll(window);
-        window.setView(client.player.view);
+        window.setView(client.getView());
         window.draw(title);
         window.setView(window.getDefaultView());
         gui.draw();

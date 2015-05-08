@@ -18,6 +18,7 @@ namespace rha{
          std::string nick;
          float x, y; float vX, vY;
          sf::Int32 regX, regY;
+         float collX, collY, collW, collH;
 
          bool inAir; sf::Int8 hp;
         public:
