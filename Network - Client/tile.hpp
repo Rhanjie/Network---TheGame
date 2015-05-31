@@ -6,17 +6,17 @@
 namespace rha{
     class cTile{
         private:
-         unsigned short id;
-         bool collision=false;
-         unsigned short angle=0;
-
          sf::Sprite* sprite;
+
+         unsigned short id;
+          bool collision=false;
+          unsigned short angle=0;
         public:
          cTile(sf::Sprite* sprite);
 
+         void setAngle(unsigned short angle){this->angle=angle;}
          inline sf::Sprite* getSprite(){return sprite;}
          inline unsigned short getAngle(){return angle;}
-         void setAngle(unsigned short angle){this->angle=angle;}
     };
 
     class cTileManager{

@@ -4,8 +4,8 @@
 int main(){
     srand(time(NULL));
 
-    rha::cGameManager manager(sf::Vector2i(800,600), "Hammerfall"); //todo - only for me, normal is 1024x768
-    manager.runApp(); //while - main loop
+    rha::cGameManager manager(sf::Vector2i(800,600), "Hammerfall"); //todo - global option
+    manager.manageApp(); //while - main loop
 
     return 0;
 }

@@ -5,23 +5,24 @@
 
 namespace rha{
     class cGameManager{
-        private:
-         tgui::Callback callback;
-         sf::RenderWindow window;
-
-         cClient client;
-
-         void runMenu();
-         void runGame();
-        protected:
-         enum gameState{MENU, GAME, END};
-            gameState state;
-
         public:
          cGameManager(sf::Vector2i size, std::string title);
          //~cGameManager();
 
-         void runApp();
+         void manageApp();
+        private:
+         sf::RenderWindow window;
+          sf::Event event;
+
+          tgui::Gui gui{window};
+         tgui::Callback callback;
+          rha::cClient client;
+
+         void sMenu();
+         void sRunning();
+        protected:
+         enum gameState{MENU, GAME, END};
+            gameState state;
     };
 }
 

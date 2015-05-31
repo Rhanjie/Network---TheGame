@@ -8,24 +8,23 @@ bool rha::cNetworkManager::sendPacket(sf::TcpSocket* socket, sf::Packet packet){
 
 bool rha::cNetworkManager::sendRawPacket(sf::TcpSocket* socket, rha::typePacketsInClient typePacket){
     sf::Packet packet;
-    packet<<int(typePacket);
 
+    packet<<typePacket;
     if(socket->send(packet)==sf::Socket::Done)
      return true;
     else return false;
 }
 
 bool rha::cNetworkManager::receivePacket(sf::TcpSocket* socket){
-    int converter;
+    int converter=0;
 
     if(socket->receive(this->dataPacket)==sf::Socket::Done){
         if(this->dataPacket>>converter){
-            tLastPacketReceive=static_cast<rha::typePacketsInServer>(converter); return true;
+            tLastPacketReceive=static_cast<rha::typePacketsInServer>(converter);
+
+            return true;
         } else return false;
-    }else{
-        this->dataPacket<<rha::typePacketsInServer::NORMAL_SERVER_NULL;
-        this->dataPacket>>converter;
-        tLastPacketReceive=static_cast<rha::typePacketsInServer>(converter);
+    }else{tLastPacketReceive=rha::typePacketsInServer::NORMAL_SERVER_NULL;
         return false;
     }
 }

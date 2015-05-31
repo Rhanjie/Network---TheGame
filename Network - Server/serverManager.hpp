@@ -5,23 +5,23 @@
 
 namespace rha{
     class cServerManager{
-        private:
-         tgui::Callback callback;
-         sf::RenderWindow window;
-         sf::Event event;
-         sf::Font font;
-
-         rha::cServer server;
-
-         void configure();
-         void running();
-        protected:
-         enum serverState{WAIT, RUN, END};
-          serverState state;
         public:
          cServerManager(sf::Vector2i size, std::string title);
 
-         void runApp();
+         void manageApp(); //main while
+        private:
+         sf::RenderWindow window;
+          sf::Event event;
+
+          tgui::Gui gui{window};
+         tgui::Callback callback;
+          rha::cServer server;
+
+         void sConfigure();
+         void sRunning();
+        protected:
+         enum serverState{WAIT, RUN, END};
+          serverState state;
     };
 }
 

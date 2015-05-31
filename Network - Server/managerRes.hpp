@@ -5,12 +5,12 @@
 namespace rha{
     class cManagerResources{
         private:
-         sf::Font font; bool loaded=true;
-         std::vector<sf::Texture>vTextures;
-
          cManagerResources(){loadAll();}
          cManagerResources(const cManagerResources&);
          ~cManagerResources(){vTextures.clear();}
+
+         sf::Font font; bool loaded=true;
+         std::vector<sf::Texture>vTextures;
 
          void loadAll(); //fill the std::vector
         public:

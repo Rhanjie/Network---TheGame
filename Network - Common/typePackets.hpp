@@ -3,31 +3,38 @@
 #include "managerLibs.hpp"
 
 namespace rha{
-    enum typePacketsInServer{ //receive in client, send in server
+    /*Receive in client, send in server*/
+    enum typePacketsInServer{
         NORMAL_SERVER_NULL,
+        NORMAL_SERVER_STOP,
+
         REPLY_CLIENT_LOGIN,
-         REPLY_OTHERCLIENT_LOGIN,
-         ERROR_CLIENT_LOGIN,
         REPLY_CLIENT_JOIN,
-         ERROR_CLIENT_JOIN,
+        ERROR_CLIENT_LOGIN,
+        ERROR_CLIENT_JOIN,
+
+        REPLY_OTHERCLIENT_LOGIN,
+        REPLY_OTHERCLIENT_JOIN,
 
         INFO_CLIENT_NEW,
-         INFO_CLIENTS_DATA,
         INFO_CLIENT_POSITION,
+        INFO_CLIENTS_DATA,
 
         INFO_PLAYER_ACTION,
         INFO_PLAYER_STOPACTION,
-        //...
     };
-    enum typePacketsInClient{ //receive in server, send in client
+
+    /*Receive in server, send in client*/
+    enum typePacketsInClient{
         NORMAL_CLIENT_NULL,
+        NORMAL_CLIENT_STOP,
+
         QUESTION_CLIENT_LOGIN,
         QUESTION_CLIENT_JOIN,
+        QUESTION_CLIENT_DATA,
 
         QUESTION_PLAYER_ACTION,
         QUESTION_PLAYER_STOPACTION,
-        QUESTION_CLIENT_DATA,
-        //...
     };
 }
 

@@ -3,30 +3,25 @@
 rha::cPlayer::cPlayer(){
     cBasePerson();
 
-    x=y=vY=regX=regY=0; hp=100;
-    inAir=0; vX=1; //todo - test
+    /*todo - test*/
+    x=y=vY=regX=regY=0;
+    hp=100; inAir=0; vX=1;
+    /*...........*/
 
-    view.setCenter(x, y); view.setSize(800,600); //todo - global option, window size
-    textureAnimation.setOtherTexture((cManagerResources::getObj()).getGraph(2), sf::Vector2i(40, 40));
-    //(textureAnimation.sprite).setOrigin((textureAnimation.sprite).getGlobalBounds().height);
+    view.setCenter(x, y); view.setSize(800,600); view.zoom(0.5); //todo - global option, window size
+
+    textureAnimation.setOtherTexture((cManagerResources::getObj()).getGraph(2)); //todo - class
+    short w=((textureAnimation.sprite).getTexture())->getSize().x/3;
+    short h=((textureAnimation.sprite).getTexture())->getSize().y/5;
+
+    textureAnimation.setSizeFrame(sf::Vector2i(w, h));
     textureAnimation.setAnimation(0);
+
+    /*(textureAnimation.sprite).setOrigin(w, h);*/ //todo - collision box.
 
     action=STAND; direction=RIGHT;
     team=NONE; profession=LACK;
-    view.zoom(0.5);
 }
-void rha::cPlayer::spawn(sf::Int32 x, sf::Int32 y){ //todo
-    action=STAND; direction=RIGHT;
-
-    regX=x, regY=y;
-    this->x=x, this->y=y;
-    view.setCenter(this->x, this->y);
-
-    (textureAnimation.sprite).setPosition(this->x, this->y);
-
-    //...
-}
-
 
 void rha::cPlayer::performAction(){
     switch(action){
@@ -35,13 +30,20 @@ void rha::cPlayer::performAction(){
         case JUMP: break;
         case ATTACK: break;
     } if(action!=STAND)
-     textureAnimation.serveAnimation();
+    textureAnimation.serveAnimation();
 }
 
-void rha::cPlayer::setTeam(eTeam team){this->team=team;}
-void rha::cPlayer::setProfession(eProfession profession){this->profession=profession;}
-void rha::cPlayer::setAction(eAction action){this->action=action;}
-void rha::cPlayer::setDirection(eDirection direction){this->direction=direction;}
+void rha::cPlayer::spawn(sf::Int32 x, sf::Int32 y){ //todo
+    action=STAND; direction=RIGHT;
+
+    regX=x, regY=y;
+    this->x=regX, this->y=regY;
+    view.setCenter(this->x, this->y);
+
+    (textureAnimation.sprite).setPosition(this->x, this->y);
+
+    //...
+}
 
 /*****private*****/
 void rha::cPlayer::moveUp(){
@@ -49,5 +51,11 @@ void rha::cPlayer::moveUp(){
     else if(direction==cPlayer::RIGHT)x+=vX;
 
     (textureAnimation.sprite).setPosition(x, y);
-    view.setCenter(x, y);
+       view.setCenter(x, y);
 }
+
+
+void rha::cPlayer::setTeam(eTeam team){this->team=team;}
+void rha::cPlayer::setProfession(eProfession profession){this->profession=profession;}
+void rha::cPlayer::setAction(eAction action){this->action=action;}
+void rha::cPlayer::setDirection(eDirection direction){this->direction=direction;}

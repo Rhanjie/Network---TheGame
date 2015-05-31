@@ -5,11 +5,9 @@
 namespace rha{
     class cServerInfo{
         private:
-         sf::IpAddress ip;
-         unsigned short port;
+         sf::IpAddress ip="";
+         unsigned short port=0;
         public:
-         cServerInfo();
-
          void setData(sf::IpAddress ip, unsigned short port);
 
          inline sf::IpAddress getIP(){return ip;}

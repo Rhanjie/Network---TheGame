@@ -8,18 +8,13 @@ namespace rha{
         public:
          enum eStatus{WATCHING, PLAYING};
         private:
-         //cPlayer player;
-         //sf::TcpSocket* socket;
-
-         //std::string nick;
          eStatus status;
         public:
-         cPlayer player; //todo
+         cPlayer player;
          sf::TcpSocket* socket;
          std::string nick;
 
          cClient(sf::TcpSocket* socket, std::string nick);
-         //void
 
          void setStatus(eStatus status){this->status=status;}
          inline eStatus getStatus(){return status;}

@@ -1,7 +1,8 @@
 #ifndef NETWORKMANAGER_HPP_INCLUDED
 #define NETWORKMANAGER_HPP_INCLUDED
-#include "managerLibs.hpp"
+
 #include <typePackets.hpp>
+#include "managerLibs.hpp"
 
 namespace rha{
     class cNetworkManager{

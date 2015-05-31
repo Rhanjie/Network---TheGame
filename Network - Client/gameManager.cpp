@@ -2,102 +2,100 @@
 
 rha::cGameManager::cGameManager(sf::Vector2i size, std::string title){
     window.create(sf::VideoMode(size.x, size.y, 32), title, sf::Style::Close);
-    if(!(cManagerResources::getObj()).isLoaded()){
-        state=END; return;
-    } else state=MENU;
-} void rha::cGameManager::runApp(){
+    if(!cManagerResources::getObj().isLoaded()){
+        std::cout<<"Error: Loading resources failed!\n";
+
+        state=END; //todo - logger
+    } else{gui.setGlobalFont(*cManagerResources::getObj().getFont()); state=MENU;}
+} void rha::cGameManager::manageApp(){
     while(window.isOpen()){
         switch(state){
             case MENU:
-             this->runMenu(); break;
+              this->sMenu();
+               break;
             case GAME:
-             this->runGame(); break;
+              this->sRunning();
+               break;
             case END:
-             window.close(); break;
+              window.close();
+               break;
         }
     }
 }
 
 /*-------------*/
 
-void rha::cGameManager::runMenu(){
-    sf::Vector2f mouse;
+void rha::cGameManager::sMenu(){
+    std::thread thrConnect;
 
-    tgui::Gui gui(window);
-    gui.setGlobalFont(*cManagerResources::getObj().getFont());
+    gui.removeAllWidgets();
     gui.loadWidgetsFromFile("media/oldStyle/menuForm.RhAf");
 
-    sf::Event event;
     while(state==MENU){
         if(client.getStatus()==cClient::WATCHING||client.getStatus()==cClient::PLAYING) state=GAME;
-        mouse=static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
         while(window.pollEvent(event)){
             switch(event.type){
              case sf::Event::Closed:
                 state=END; break;
-             default: break;
+
+                //...
             }
+
             gui.handleEvent(event);
         } while(gui.pollCallback(callback)){
-            if(callback.id==1){
-                tgui::EditBox::Ptr eBoxCopy1=gui.get("EditBox1");
-                tgui::EditBox::Ptr eBoxCopy2=gui.get("EditBox2");
+            switch(callback.id){
+                case 1:{
+                  tgui::EditBox::Ptr eBoxCopy1=gui.get("EditBox1");
+                  tgui::EditBox::Ptr eBoxCopy2=gui.get("EditBox2");
 
-                std::thread thrConnect(&rha::cClient::connect, &client, std::string(eBoxCopy1->getText()),
-                 7415, std::string(eBoxCopy2->getText())); thrConnect.detach();
+                   std::string text1=eBoxCopy1->getText(), text2=eBoxCopy2->getText();
+                  thrConnect=std::thread(&rha::cClient::connect, &client,
+                   text1, 7415, text2); thrConnect.detach(); break;
+                }
+                case 2: state=END; break;
             }
-            else if(callback.id==2){state=END; break;}
         }
 
         window.clear();
-        gui.draw();
-
+         gui.draw();
         window.display();
     }
 }
 
-void rha::cGameManager::runGame(){
-    sf::Text title("Game is created...", *cManagerResources::getObj().getFont(), 50); //todo - only test
-    title.setOrigin(title.getGlobalBounds().width/2, 50/2);
-    title.setPosition((window.getSize()).x/2, 75);
-
-    sf::Clock clock; //for fixed step loop
+void rha::cGameManager::sRunning(){
+    sf::Clock clock; sf::Time time;
     sf::Time timeOfUpdate=sf::Time::Zero;
     const sf::Time timeStep=sf::seconds(1/60.f);
 
-    tgui::Gui gui(window);
-    gui.setGlobalFont(*cManagerResources::getObj().getFont());
+    gui.removeAllWidgets();
     gui.loadWidgetsFromFile("media/oldStyle/gameForm.RhAf");
 
-    sf::Event event;
     while(state==GAME){
-        sf::Time time=clock.restart();
+        time=clock.restart();
 
         timeOfUpdate+=time;
         while(timeOfUpdate>timeStep){
             timeOfUpdate-=timeStep;
+
+            if(client.getStatus()==cClient::eStatus::NOTCONNECT) state=MENU;
             while(window.pollEvent(event)){
                 client.managePlayer(event);
-                switch(event.type){
-                 case sf::Event::Closed:
-                    client.disconnect(); state=MENU; break;
-                 default: break;
-                }
+
                 gui.handleEvent(event);
             } while(gui.pollCallback(callback)){
-                if(callback.id==1){(client.manager).sendRawPacket(&client.socket, rha::typePacketsInClient::QUESTION_CLIENT_JOIN);} //todo
-                else if(callback.id==2){client.disconnect(); state=MENU; break;}
+                switch(callback.id){
+                    case 1: (client.manager).sendRawPacket(&client.socket, rha::typePacketsInClient::QUESTION_CLIENT_JOIN); break;
+                    case 2: client.disconnect(); state=MENU; break;
+                }
             }
 
             client.updateAll(window);
         }
 
         window.clear(sf::Color(41, 137, 216));
-        client.drawAll(window);
-        window.setView(client.getView());
-        window.draw(title);
-        window.setView(window.getDefaultView());
-        gui.draw();
+         client.drawAll(window);
+
+         gui.draw();
         window.display();
     }
 }

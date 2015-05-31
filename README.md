@@ -7,4 +7,4 @@ The game is based on a network battle between the two teams - green and orange.<
 <br>
 <br>
 <b>The current version:</b><br>
-v. "Prototype. 0.2A"
+v. "PreAlpha 1.4A"

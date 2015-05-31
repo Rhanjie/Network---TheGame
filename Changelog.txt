@@ -1,6 +1,20 @@
 //Update soon...
 
-Update: Alpha 0.5A:
+Update: PreAlpha 1.4A:
+- Supporting the map operation by the server.
+- Improved server code, less crashes!
+- Corrected threading operation, new system!
+- Expanded server applications.
+- Cleaned and optimized all code.
+- Bugs fixed.
+
+Update: PreAlpha 1.0A:
+- Started work on the map.
+- Improving player character.
+- Many other things.
+- Bugs fixed.
+
+Update: PreAlpha 0.5A:
 - Support for multiple players.
 - Handling the camera.
 - Character movement.

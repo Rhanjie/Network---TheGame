@@ -9,14 +9,16 @@
 #include "map.hpp"
 
 namespace rha{
-    class cClient{
+    /*Manage the main player and other clients*/
+     class cClient{
         public:
          enum eStatus{NOTCONNECT, WATCHING, PLAYING};
          std::vector<cOtherPlayer>vOtherPlayers;
         private:
-         cMap mapGame;
-         cPlayer player;
          cServerInfo server;
+         cPlayer player;
+         cMap mapGame;
+
          sf::Clock clock; sf::Time timer;
 
          eStatus status;
@@ -27,11 +29,11 @@ namespace rha{
          cClient();
          void connect(sf::IpAddress ip, unsigned short port, std::string nick);
          bool login(std::string nick);
-         bool join();
+         void disconnect();
+
          void managePlayer(sf::Event event);
          void updateAll(sf::RenderWindow& window);
          void drawAll(sf::RenderWindow& window);
-         void disconnect();
 
          inline bool getStatus(){return status;}
          inline sf::View getView(){return player.view;}

@@ -10,7 +10,6 @@ namespace rha{
         public:
          cPlayer();
 
-         sf::Texture textureTest;
          sf::View view; sf::Clock clock;
          cTextureAnimation textureAnimation;
 

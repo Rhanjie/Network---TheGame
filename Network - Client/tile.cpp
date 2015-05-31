@@ -19,6 +19,5 @@ void rha::cTileManager::setTextures(eStyle style){
         sprite.setOrigin(w/2,h/2);
 
         vSprites[vSprites.size()-1]=sprite;
-        std::cout<<"ADD "<<i+1<<" - X: "<<x*w<<", Y:"<<y*h<<std::endl; //debug
     }
 }
