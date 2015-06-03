@@ -26,7 +26,7 @@ bool rha::cClient::login(std::string nick){
     sf::Packet packet;
 
     packet<<rha::typePacketsInClient::QUESTION_CLIENT_LOGIN<<nick;
-    if(!manager.sendPacket(&socket, packet)) return false;
+    if(!manager.sendPacket(&socket, &packet)) return false;
      else player.nick=nick;
 
     if(manager.receivePacket(&socket)){
@@ -48,8 +48,9 @@ bool rha::cClient::login(std::string nick){
 }
 
 void rha::cClient::disconnect(){
-    std::cout<<"Disconnect!\n";
-     socket.disconnect();
+    manager.sendRawPacket(&socket, rha::typePacketsInClient::NORMAL_CLIENT_STOP);
 
-    status=NOTCONNECT;
+     socket.disconnect();
+     status=NOTCONNECT;
+    std::cout<<"Disconnect!\n";
 }

@@ -68,9 +68,8 @@ void rha::cServer::receiveData(tgui::Gui* gui, bool* run, bool* stop){
                                     }
                                 }
 
-                                if(manager.sendPacket(vClients[i].socket, packet)){
-                                    for(short j=0; j<vClients.size(); ++j)
-                                      if(j!=i) manager.sendPacket(vClients[j].socket, packetOther);
+                                if(manager.sendPacket(vClients[i].socket, &packet)){
+                                    this->sendAll(i, &packetOther);
                                 } vClients[i].setStatus(cClient::eStatus::WATCHING);
 
                                 cBoxCopy->addLine(vClients[i].nick+" joined the spectators!", sf::Color::Yellow);
@@ -95,10 +94,9 @@ void rha::cServer::receiveData(tgui::Gui* gui, bool* run, bool* stop){
                             packetOther<<rha::typePacketsInServer::REPLY_OTHERCLIENT_JOIN<<vClients[i].nick<<int((vClients[i].player).x)
                              <<int((vClients[i].player).y)<<int((vClients[i].player).team)<<int((vClients[i].player).profession);
 
-                            if(manager.sendPacket(vClients[i].socket, packet)){
-                                for(short j=0; j<vClients.size(); ++j){
-                                    if(j!=i){manager.sendPacket(vClients[j].socket, packetOther);} //todo - disconnect
-                                } vClients[i].setStatus(cClient::PLAYING);
+                            if(manager.sendPacket(vClients[i].socket, &packet)){
+                                 this->sendAll(i, &packetOther);
+                                vClients[i].setStatus(cClient::PLAYING);
 
                                 cBoxCopy->addLine(vClients[i].nick+" joined the game!", sf::Color::Yellow);
                             } else{(vClients[i].player).team=cPlayer::NONE; (vClients[i].player).profession=cPlayer::LACK;}
@@ -122,7 +120,7 @@ void rha::cServer::receiveData(tgui::Gui* gui, bool* run, bool* stop){
                                     packet<<(vClients[j].player).x<<(vClients[j].player).y;
                                    std::cout<<i<<" - Packet - ["<<j<<"] - "<<(vClients[j].player).x<<std::endl;
                                 }
-                            } if(!manager.sendPacket(vClients[i].socket, packet)){
+                            } if(!manager.sendPacket(vClients[i].socket, &packet)){
                                 //{vClients.erase(vClients[i]) //vClients[i].disconnect();
                             }
                         } else{/*packet destroyed.*/}
@@ -140,9 +138,8 @@ void rha::cServer::receiveData(tgui::Gui* gui, bool* run, bool* stop){
 
                             packet<<rha::typePacketsInServer::INFO_PLAYER_ACTION<<vClients[i].nick
                              <<int((vClients[i].player).action)<<int((vClients[i].player).direction);
-                            if(manager.sendPacket(vClients[i].socket, packet)){
-                                for(short j=0; j<vClients.size(); ++j)
-                                 if(j!=i) manager.sendPacket(vClients[j].socket, packet);
+                            if(manager.sendPacket(vClients[i].socket, &packet)){
+                                this->sendAll(i, &packet);
                             } //todo - optimization.
                         } else{/*packet destroyed.*/}
                             packet.clear(); break;
@@ -155,10 +152,20 @@ void rha::cServer::receiveData(tgui::Gui* gui, bool* run, bool* stop){
 
                         (vClients[i].player).action=cPlayer::STAND;
                         packet<<rha::typePacketsInServer::INFO_PLAYER_STOPACTION<<vClients[i].nick;
-                        if(manager.sendPacket(vClients[i].socket, packet)){
-                            for(short j=0; j<vClients.size(); ++j)
-                             if(j!=i) manager.sendPacket(vClients[j].socket, packet);
-                        } packet.clear(); break;
+                        if(manager.sendPacket(vClients[i].socket, &packet)){
+                            this->sendAll(i, &packet);
+                        } else{/*...*/}
+                        packet.clear(); break;
+                    }
+
+                    case rha::typePacketsInClient::NORMAL_CLIENT_STOP:{
+                        std::cout<<"Disconnect "<<vClients[i].nick<<"\n";
+
+                        packet<<rha::typePacketsInServer::REPLY_OTHERCLIENT_STOP<<vClients[i].nick;
+                        this->sendAll(i, &packet);
+
+                        vClients.erase(vClients.begin()+i);
+                         packet.clear(); break;
                     }
                 }
             }
@@ -173,4 +180,9 @@ void rha::cServer::releaseResources(){
 
     vClients.clear(); listener=nullptr;
     tMap.setSize(sf::Vector2u(0, 0));
+}
+
+void rha::cServer::sendAll(short &which, sf::Packet* packet){
+    for(short i=0; i<vClients.size(); ++i)
+     if(i!=which) if(manager.sendPacket(vClients[i].socket, packet)){/*...*/};
 }

@@ -19,6 +19,8 @@ namespace rha{
          void receiveData(tgui::Gui* gui, bool* run, bool* stop);
          void findNewConnection(tgui::Gui* gui, bool* run, bool* stop);
          bool listening(sf::TcpListener* listener, unsigned int port);
+
+         void sendAll(short &which, sf::Packet* packet);
          void releaseResources();
 
          inline void setListenerPtr(sf::TcpListener* listener){

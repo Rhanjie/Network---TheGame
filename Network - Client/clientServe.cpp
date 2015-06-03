@@ -14,10 +14,8 @@ void rha::cClient::managePlayer(sf::Event event){
 
                         if((event.key).code==sf::Keyboard::A)
                          packet<<cPlayer::eDirection::LEFT;
-                        //else
-                        if((event.key).code==sf::Keyboard::D)
-                        packet<<cPlayer::eDirection::RIGHT;
-                        if(!manager.sendPacket(&socket, packet)) disconnect();
+                        else packet<<cPlayer::eDirection::RIGHT;
+                        if(!manager.sendPacket(&socket, &packet)) disconnect();
                     }
                 } /*else if((event.key).code==sf::Keyboard::W){
                     player.setAction(cPlayer::eAction::JUMP);
@@ -47,6 +45,7 @@ void rha::cClient::managePlayer(sf::Event event){
 
 void rha::cClient::updateAll(sf::RenderWindow& window){
     sf::Int32 x, y; std::string nick;
+    int convAction, convDirection;
 
     if(manager.receivePacket(&socket)){
         switch(manager.getLastTypePacket()){
@@ -114,7 +113,7 @@ void rha::cClient::updateAll(sf::RenderWindow& window){
 
 
             case INFO_PLAYER_ACTION:{
-                int convAction, convDirection;
+                //...
 
                 if(manager.getLastPacket()>>nick>>convAction>>convDirection){
                     if(player.nick==nick){
@@ -155,6 +154,21 @@ void rha::cClient::updateAll(sf::RenderWindow& window){
 
             case ERROR_CLIENT_JOIN:{std::cout<<"Joining the game... ERROR\n"; break;}
             case NORMAL_SERVER_STOP:{std::cout<<" Server close!\n"; disconnect(); break;}
+            case REPLY_OTHERCLIENT_STOP:{
+                if(manager.getLastPacket()>>nick){
+                    std::cout<<"OtherPlayer disconnected! ("<<nick<<")\n";
+
+                    for(int j=0; j<vOtherPlayers.size(); ++j){
+                        std::cout<<vOtherPlayers[j].nick<<" /\ "<<nick<<std::endl;
+                        if(vOtherPlayers[j].nick==nick){
+                            std::cout<<"donenenee"<<std::endl;
+                            vOtherPlayers.erase(vOtherPlayers.begin()+j);
+
+                             break;
+                        }
+                    }
+                } break;
+            }
         }
     }
 
@@ -168,7 +182,7 @@ void rha::cClient::updateAll(sf::RenderWindow& window){
 
         clock.restart();
         packet<<rha::QUESTION_CLIENT_DATA<<player.x<<player.y;
-        if(!manager.sendPacket(&socket, packet)){std::cout<<" send data failed\n"; disconnect();}
+        if(!manager.sendPacket(&socket, &packet)){std::cout<<" send data failed\n"; disconnect();}
     }
 }
 

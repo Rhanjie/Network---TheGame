@@ -8,9 +8,11 @@ namespace rha{
     class cNetworkManager{
         private:
          typePacketsInClient tLastPacketReceive;
-         sf::Packet dataPacket;
+         sf::Packet dataPacket, sPacket;
+
+         int converter=0;
         public:
-         bool sendPacket(sf::TcpSocket* socket, sf::Packet packet);
+         bool sendPacket(sf::TcpSocket* socket, sf::Packet* packet);
          bool sendRawPacket(sf::TcpSocket* socket, typePacketsInServer tPacketSend);
          bool receivePacket(sf::TcpSocket* socket); /*dataSaveInObject*/
 
